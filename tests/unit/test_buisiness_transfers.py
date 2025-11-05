@@ -29,10 +29,11 @@ class Test_buisness_acc_transfers:
         acc = BusinessAccount("John", "Doe", "12345678901")
         acc.deposit(200)
         acc.expres_transfer(100)
-        assert acc.balance(95)
+        assert acc.balance == 95
 
     def test_business_express_trasfer_lowest(self):
         acc = BusinessAccount("John", "Doe", "12345678901")
         acc.deposit(100)
         acc.expres_transfer(100)
-        assert acc.balance(-5)
+        assert acc.balance == -5
+
