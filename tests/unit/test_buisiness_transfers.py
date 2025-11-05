@@ -26,13 +26,13 @@ class Test_buisness_acc_transfers:
         assert acc.balance == prevsaldo + 100
 
     def test_business_express_trensfer(self):
-        acc = BusinessAccount("John", "Doe", "12345678901")
+        acc = BusinessAccount("John", "12345678901")
         acc.deposit(200)
-        acc.expres_transfer(100)
-        assert acc.balance(95)
+        acc.express_transfer(100)
+        assert acc.balance == 95
 
     def test_business_express_trasfer_lowest(self):
-        acc = BusinessAccount("John", "Doe", "12345678901")
+        acc = BusinessAccount("John", "12345678901")
         acc.deposit(100)
-        acc.expres_transfer(100)
-        assert acc.balance(-5)
+        acc.express_transfer(100)
+        assert acc.balance == -5

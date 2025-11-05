@@ -28,13 +28,13 @@ class Testtransfer:
     def test_express_trensfer(self):
         acc = Account("John", "Doe", "12345678901")
         acc.deposit(200)
-        acc.expres_transfer(100)
-        assert acc.balance(99)
+        acc.express_transfer(100)
+        assert acc.balance == 99
 
     def test_express_trasfer_lowest(self):
         acc = Account("John", "Doe", "12345678901")
         acc.deposit(100)
-        acc.expres_transfer(100)
-        assert acc.balance(-1)
+        acc.express_transfer(100)
+        assert acc.balance == -1
 
 
