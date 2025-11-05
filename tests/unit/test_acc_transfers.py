@@ -1,3 +1,4 @@
+
 from src.account import Account
 import pytest
 
@@ -47,6 +48,21 @@ class Testtransfer:
         acc.deposit(100)
         with pytest.raises(ValueError):
             acc.express_transfer(200)
+
+    def test_history_deposit(self):
+        acc = Account("John", "Doe", "12345678901")
+        acc.deposit(100)
+        assert acc.history == [100]
+
+    def test_history_withdraw(self):
+        acc = Account("John", "Doe", "12345678901")
+        acc.withdraw(200)
+        assert acc.history == [-200]
+
+    def test_history_express(self):
+        acc = Account("John", "Doe", "12345678901")
+        acc.express_transfer(100)
+        assert acc.history == [-100, -1]
 
 
 
