@@ -34,3 +34,47 @@ class Account:
             return False
 
         return year > 1960
+
+    def deposit(self, amount):
+        if amount > 0 :
+            self.balance += amount
+        else:
+            raise ValueError("nie mozna wpłacic ujemnej wartosci")
+
+
+    def withdraw(self,amount):
+        localbalance = self.balance
+        if localbalance < amount:
+            raise ValueError("brak wystarczajacych srodkow na koncie")
+        else:
+            self.balance -= amount
+
+    def express_transfer(self, amount):
+        fee = 1
+        total = fee + amount
+        if self.balance - total < -fee :
+            raise ValueError("Saldo nie może spaść poniżej dozwolonej opłaty.")
+        self.balance -= total
+
+class BusinessAccount(Account):
+    def __init__(self, company_name, nip):
+        # wywołujemy konstruktor klasy bazowej
+        super().__init__(first_name=None, last_name=None, pesel="00000000000")
+
+        # a teraz nadpisujemy tylko to, co dotyczy konta firmowego:
+        self.company_name = company_name
+
+        if len(nip) == 10 and nip.isdigit():
+            self.nip = nip
+        else:
+            self.nip = "Invalid"
+
+        self.promo_code = None  # brak promocji
+
+
+    def express_transfer(self, amount):
+        fee = 5
+        total = fee + amount
+        if self.balance - total < -fee :
+            raise ValueError("Saldo nie może spaść poniżej dozwolonej opłaty.")
+        self.balance -= total
