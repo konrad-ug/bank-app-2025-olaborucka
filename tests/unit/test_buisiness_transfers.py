@@ -1,3 +1,4 @@
+
 from src.account import BusinessAccount
 import pytest
 
@@ -42,4 +43,9 @@ class Test_buisness_acc_transfers:
         acc.deposit(100)
         with pytest.raises(ValueError):
             acc.express_transfer(200)
+
+    def test_buisiness_history_express(self):
+        acc = BusinessAccount("John", "12345678901")
+        acc.express_transfer(100)
+        assert acc.history == [-100, -5]
 

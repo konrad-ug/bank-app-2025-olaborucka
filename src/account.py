@@ -3,6 +3,7 @@ class Account:
         self.first_name = first_name
         self.last_name = last_name
         self.balance = 0
+        self.history = []
         if len(pesel) == 11 :
             self.pesel = pesel
         else:
@@ -38,6 +39,8 @@ class Account:
     def deposit(self, amount):
         if amount > 0 :
             self.balance += amount
+            self.history.append(amount)
+
         else:
             raise ValueError("nie mozna wpłacic ujemnej wartosci")
 
@@ -48,13 +51,17 @@ class Account:
             raise ValueError("brak wystarczajacych srodkow na koncie")
         else:
             self.balance -= amount
+            self.history.append(-amount)
 
     def express_transfer(self, amount):
         fee = 1
         total = fee + amount
         if self.balance - total < -fee :
             raise ValueError("Saldo nie może spaść poniżej dozwolonej opłaty.")
-        self.balance -= total
+        self.balance -= amount
+        self.history.append(-amount)
+        self.balance -= fee
+        self.history.append(-fee)
 
 class BusinessAccount(Account):
     def __init__(self, company_name, nip):
@@ -77,4 +84,7 @@ class BusinessAccount(Account):
         total = fee + amount
         if self.balance - total < -fee :
             raise ValueError("Saldo nie może spaść poniżej dozwolonej opłaty.")
-        self.balance -= total
+        self.balance -= amount
+        self.history.append(-amount)
+        self.balance -= fee
+        self.history.append(-fee)
