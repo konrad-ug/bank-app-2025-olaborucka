@@ -25,6 +25,11 @@ class Testtransfer:
         acc.deposit(100)
         assert acc.balance == prevsaldo + 100
 
+    def test_minus_transfer(self):
+        acc = Account("John", "Doe", "12345678901")
+        with pytest.raises(ValueError):
+            acc.deposit(-200)
+
     def test_express_trensfer(self):
         acc = Account("John", "Doe", "12345678901")
         acc.deposit(200)
@@ -36,5 +41,14 @@ class Testtransfer:
         acc.deposit(100)
         acc.express_transfer(100)
         assert acc.balance == -1
+
+    def test_express_transfer_underlowest(self):
+        acc = Account("John", "Doe", "12345678901")
+        acc.deposit(100)
+        with pytest.raises(ValueError):
+            acc.express_transfer(200)
+
+
+
 
 

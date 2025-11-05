@@ -11,3 +11,8 @@ class Test_business_acc:
         acc = BusinessAccount("firmax", "123")
         assert acc.nip == "Invalid"
 
+    def test_no_promo_for_business(self):
+        acc = BusinessAccount("firmax", "1234567890")
+        assert acc.balance == 0
+
+

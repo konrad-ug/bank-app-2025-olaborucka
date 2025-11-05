@@ -36,3 +36,10 @@ class Test_buisness_acc_transfers:
         acc.deposit(100)
         acc.express_transfer(100)
         assert acc.balance == -5
+
+    def test_business_express_transfer_underlowest(self):
+        acc = BusinessAccount("John", "12345678901")
+        acc.deposit(100)
+        with pytest.raises(ValueError):
+            acc.express_transfer(200)
+
