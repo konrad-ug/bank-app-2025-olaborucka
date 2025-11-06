@@ -56,13 +56,15 @@ class Testtransfer:
 
     def test_history_withdraw(self):
         acc = Account("John", "Doe", "12345678901")
+        acc.deposit(200)
         acc.withdraw(200)
-        assert acc.history == [-200]
+        assert acc.history == [200,-200]
 
     def test_history_express(self):
         acc = Account("John", "Doe", "12345678901")
+        acc.deposit(100)
         acc.express_transfer(100)
-        assert acc.history == [-100, -1]
+        assert acc.history == [100,-100, -1]
 
 
 

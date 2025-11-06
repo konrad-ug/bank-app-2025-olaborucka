@@ -46,6 +46,7 @@ class Test_buisness_acc_transfers:
 
     def test_buisiness_history_express(self):
         acc = BusinessAccount("John", "12345678901")
+        acc.deposit(100)
         acc.express_transfer(100)
-        assert acc.history == [-100, -5]
+        assert acc.history == [100,-100, -5]
 
