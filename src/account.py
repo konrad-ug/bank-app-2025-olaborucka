@@ -62,16 +62,28 @@ class Account:
         self.balance -= fee
         self.history.append(-fee)
 
+    def _check_last_3_deposits(self):
+        """Metoda pomocnicza: sprawdza warunek 3 ostatnich wpłat."""
+        if len(self.history) < 3:
+            return False
+        return all(t > 0 for t in self.history[-3:])
+
+    def _check_sum_of_last_5_transactions(self, amount):
+        """Metoda pomocnicza: sprawdza warunek sumy 5 transakcji."""
+        if len(self.history) < 5:
+            return False
+        return sum(self.history[-5:]) > amount
+
     def submit_for_loan(self, amount):
-        if len(self.history) >= 3 and all(t > 0 for t in self.history[-3:]):
+        """Główna metoda kredytowa - teraz jest czysta i czytelna."""
+        # Sprawdzamy, czy którykolwiek z warunków jest spełniony
+        condition1 = self._check_last_3_deposits()
+        condition2 = self._check_sum_of_last_5_transactions(amount)
+
+        if condition1 or condition2:
             self.balance += amount
             self.history.append(amount)
             return True
-        elif len(self.history) >= 5:
-            if sum(self.history[-5:]) > amount:
-                self.balance += amount
-                self.history.append(amount)
-                return True
             
         return False
 
