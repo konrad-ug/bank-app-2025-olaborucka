@@ -1,7 +1,7 @@
 from src.account import Account
 import pytest
 
-# Definiujemy fixturę lokalnie (chyba że masz ją w conftest.py, wtedy możesz ten fragment usunąć)
+
 @pytest.fixture
 def acc():
     return Account("John", "Doe", "12345678901")
