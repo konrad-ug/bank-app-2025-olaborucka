@@ -112,3 +112,13 @@ class BusinessAccount(Account):
         self.history.append(-amount)
         self.balance -= fee
         self.history.append(-fee)
+
+    def take_loan(self, amount):
+        if self.balance < 2* amount:
+            return False
+        if -1775 not in self.history:
+            return False
+        
+        self.balance += amount
+        self.history.append(amount)
+        return True
