@@ -7,7 +7,7 @@ def acc():
 
 class Testtransfer:
     
-    # --- PROSTE WPŁATY I WYPŁATY ---
+    # PROSTE WPŁATY I WYPŁATY
 
     def test_saldo_deposit(self, acc):
         acc.deposit(100)
@@ -27,12 +27,11 @@ class Testtransfer:
         with pytest.raises(ValueError):
             acc.deposit(-200)
 
-    # --- PRZELEWY EKSPRESOWE (PARAMETRYZACJA) ---
-    # Zamiast dwóch osobnych funkcji, mamy jedną sprytną.
+    # PRZELEWY EKSPRESOWE
     
     @pytest.mark.parametrize("initial_money, amount, expected_result", [
-        (200, 100, 99),  # 200 - 100 - 1 = 99
-        (100, 100, -1)   # 100 - 100 - 1 = -1
+        (200, 100, 99),  
+        (100, 100, -1)   
     ])
     def test_express_transfer_success(self, acc, initial_money, amount, expected_result):
         acc.deposit(initial_money)
@@ -44,9 +43,7 @@ class Testtransfer:
         with pytest.raises(ValueError):
             acc.express_transfer(200)
 
-    # --- HISTORIA (PARAMETRYZACJA) ---
-    # To jest opcjonalne, ale bardzo eleganckie. 
-    # Sprawdzamy różne scenariusze i oczekiwany wygląd tablicy historii.
+    # HISTORIA
 
     def test_history_deposit(self, acc):
         acc.deposit(100)
