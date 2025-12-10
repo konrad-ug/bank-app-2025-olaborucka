@@ -77,3 +77,30 @@ def delete_account(pesel):
         return jsonify({"message": "Account deleted"}), 200
     else:
         return jsonify({"message": "Account not found"}), 404
+    
+@app.route("/api/accounts/<pesel>/transfer", methods={'POST'})
+def transfer_money(pesel):
+    account = registry.get_account_by_pesel(pesel)
+    if not account:
+        return jsonify({"message": "Account not found"}), 404
+    
+    data = request.get_json()
+    amnt = data["amount"]
+    try:
+        if data["type"] == "incoming" :
+            account.deposit(amnt)
+
+        elif data["type"] == "outgoing" :
+            account.withdraw(amnt)
+        
+        elif data["type"] == "express" :
+            account.express_transfer(amnt)
+        else:
+            jsonify({"message": "Invalid transfer type"}), 400
+
+        return jsonify({"message ": "demand accepted"}) , 200
+    
+    except ValueError as e:
+        return jsonify({"message" : "demand denied"}), 422
+    
+
