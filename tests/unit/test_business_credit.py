@@ -1,9 +1,9 @@
 from src.account import BusinessAccount
 import pytest
 
-# --- DANE TESTOWE (Tak jak na screenshocie) ---
 
-# Struktura danych: (historia, saldo_początkowe, kwota_kredytu, oczekiwany_wynik, oczekiwane_saldo_końcowe)
+
+# Struktura danych
 company_loan_tests = [
     # Przypadek 1: Sukces (ZUS jest, saldo 2000 >= 2*1000)
     ([-1775], 2000, 1000, True, 3000),
@@ -18,7 +18,7 @@ company_loan_tests = [
     ([], 5000, 1000, False, 5000),
 ]
 
-# Nazwy testów, które wyświetlą się w terminalu (ids)
+# Nazwy testów
 test_ids = [
     "success_sufficient_balance_and_zus",
     "fail_no_zus_payment",
@@ -38,14 +38,13 @@ class TestBusinessCredit:
         ids=test_ids
     )
     def test_business_loan(self, biz_acc, history, initial_balance, loan_amount, expected_result, expected_final_balance):
-        # 1. SETUP - Ręczne ustawienie stanu obiektu (jak na screenie)
-        # Nadpisujemy listę historii i saldo, zamiast robić deposit()
+        # 1. SETUP 
         biz_acc.history = history
         biz_acc.balance = initial_balance
 
-        # 2. ACTION - Próba wzięcia kredytu
+        # 2. ACTION 
         result = biz_acc.take_loan(loan_amount)
 
-        # 3. ASSERT - Sprawdzenie wyniku i salda końcowego
+        # 3. ASSERT 
         assert result is expected_result
         assert biz_acc.balance == expected_final_balance

@@ -3,22 +3,21 @@ from src.account import Account
 from src.registry import AccountsRegistry
 
 app = Flask(__name__)
-# Tworzymy instancję rejestru, która będzie trzymać dane w pamięci,
-# dopóki serwer działa.
 registry = AccountsRegistry()
 
 @app.route("/api/accounts", methods=['POST'])
 def create_account():
     data = request.get_json()
     print(f"Request create account: {data}")
-
+    checkpesel = data["pesel"]
+    if registry.get_account_by_pesel(checkpesel) != None:
+        return jsonify({"message": "Account with this pesel already exists"}), 409
+    
     try:
-        # Tworzymy konto używając danych z JSONa
         account = Account(data["name"], data["surname"], data["pesel"])
         registry.add_account(account)
         return jsonify({"message": "Account created"}), 201
     except ValueError as e:
-        # Np. gdy pesel jest niepoprawny (rzucany przez klasę Account)
         return jsonify({"message": str(e)}), 400
 
 @app.route("/api/accounts", methods=['GET'])
