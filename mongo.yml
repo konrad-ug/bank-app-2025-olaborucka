@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: bank_mongo
+    ports:
+      - "27017:27017"
