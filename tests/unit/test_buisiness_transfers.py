@@ -1,14 +1,14 @@
 from src.account import BusinessAccount
 import pytest
-
+from unittest.mock import patch
 
 @pytest.fixture
 def biz_acc():
-    return BusinessAccount("Januszex", "1234567890")
+    # Mockujemy weryfikację NIP, żeby testy nie łączyły się z internetem
+    with patch.object(BusinessAccount, 'verify_nip_with_gov', return_value=True):
+        return BusinessAccount("Januszex", "1234567890")
 
 class Test_buisness_acc_transfers:
-
-    # Testy Podstawowe Wpłaty/Wypłaty
 
     def test_business_deposit(self, biz_acc):
         biz_acc.deposit(100)
@@ -20,13 +20,10 @@ class Test_buisness_acc_transfers:
         assert biz_acc.balance == 40
 
     def test_business_withdraw_error(self, biz_acc):
-        """Sprawdza błąd przy próbie wypłaty ponad stan."""
         biz_acc.deposit(100)
         with pytest.raises(ValueError):
             biz_acc.withdraw(200)
 
-    # Testy Przelewów Ekspresowych
-    
     @pytest.mark.parametrize("initial_money, transfer_amount, expected_balance", [
         (200, 100, 95), 
         (100, 100, -5)  
@@ -36,16 +33,12 @@ class Test_buisness_acc_transfers:
         biz_acc.express_transfer(transfer_amount)
         assert biz_acc.balance == expected_balance
 
-    # Testy Graniczne i Historia
-
     def test_business_express_transfer_insufficient_funds(self, biz_acc):
-        """Sprawdza, czy rzuca błąd, gdy przekroczymy limit (saldo < -5)."""
         biz_acc.deposit(100)
         with pytest.raises(ValueError):
             biz_acc.express_transfer(200)
 
     def test_business_history_updates(self, biz_acc):
-        """Sprawdza historię po przelewie ekspresowym."""
         biz_acc.deposit(100)
         biz_acc.express_transfer(100)
         assert biz_acc.history == [100, -100, -5]

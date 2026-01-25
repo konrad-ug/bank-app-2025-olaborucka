@@ -1,3 +1,7 @@
+import requests
+import os
+from datetime import date
+
 class Account:
     def __init__(self, first_name, last_name, pesel, promo_code=None):
         self.first_name = first_name
@@ -54,7 +58,6 @@ class Account:
     def express_transfer(self, amount):
         fee = 1
         total = amount + fee
-        # można spaść do -fee, ale nie niżej
         if self.balance - total < -fee:
             raise ValueError("Saldo nie może spaść poniżej dozwolonej opłaty.")
         self.balance -= amount
@@ -63,20 +66,16 @@ class Account:
         self.history.append(-fee)
 
     def _check_last_3_deposits(self):
-        """Metoda pomocnicza: sprawdza warunek 3 ostatnich wpłat."""
         if len(self.history) < 3:
             return False
         return all(t > 0 for t in self.history[-3:])
 
     def _check_sum_of_last_5_transactions(self, amount):
-        """Metoda pomocnicza: sprawdza warunek sumy 5 transakcji."""
         if len(self.history) < 5:
             return False
         return sum(self.history[-5:]) > amount
 
     def submit_for_loan(self, amount):
-        """Główna metoda kredytowa - teraz jest czysta i czytelna."""
-        # Sprawdzamy, czy którykolwiek z warunków jest spełniony
         condition1 = self._check_last_3_deposits()
         condition2 = self._check_sum_of_last_5_transactions(amount)
 
@@ -88,24 +87,54 @@ class Account:
         return False
 
 
-
-
 class BusinessAccount(Account):
     def __init__(self, company_name, nip):
+        # Najpierw wywołujemy konstruktor rodzica
         super().__init__(first_name=None, last_name=None, pesel="00000000000")
         self.company_name = company_name
-
-        if len(nip) == 10 and nip.isdigit():
-            self.nip = nip
-        else:
-            self.nip = "Invalid"
-
         self.promo_code = None  # brak promocji
+
+        # Walidacja długości NIP
+        if len(nip) != 10 or not nip.isdigit():
+            self.nip = "Invalid"
+        else:
+            self.nip = nip
+            # FEATURE 18: Sprawdzamy w rejestrze Gov, czy firma istnieje
+            # Jeśli weryfikacja się nie uda (zwróci False), rzucamy błąd
+            if not self.verify_nip_with_gov(nip):
+                raise ValueError("Company not registered!!")
+
+    def verify_nip_with_gov(self, nip):
+        """Wysyła zapytanie do API MF i sprawdza status VAT."""
+        try:
+            # Pobieramy URL ze zmiennej środowiskowej (domyślnie testowy)
+            base_url = os.environ.get("BANK_APP_MF_URL", "https://wl-test.mf.gov.pl/")
+            today = date.today().strftime("%Y-%m-%d")
+            url = f"{base_url}api/search/nip/{nip}?date={today}"
+            
+            print(f"Sending request to: {url}") # Logujemy url
+            
+            response = requests.get(url)
+            print(f"Gov API Response: {response.text}") # Logujemy odpowiedź
+
+            if response.status_code == 200:
+                data = response.json()
+                # Szukamy klucza "subject" -> "statusVat"
+                subject = data.get("result", {}).get("subject")
+                
+                # Jeśli subject to None (jak na Twoim screenie), to firma nie istnieje -> False
+                if subject and subject.get("statusVat") == "Czynny":
+                    return True
+            
+            return False # Każdy inny przypadek to odmowa
+            
+        except Exception as e:
+            print(f"Error checking NIP: {e}")
+            return False # W razie błędu połączenia bezpieczniej uznać, że walidacja nie przeszła
 
     def express_transfer(self, amount):
         fee = 5
         total = amount + fee
-        # można spaść do -fee, ale nie niżej
         if self.balance - total < -fee:
             raise ValueError("Saldo nie może spaść poniżej dozwolonej opłaty.")
         self.balance -= amount
