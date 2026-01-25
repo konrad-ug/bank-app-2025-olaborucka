@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from src.account import Account
 from src.registry import AccountsRegistry
+from src.accounts_repository import MongoAccountsRepository
 
 app = Flask(__name__)
 registry = AccountsRegistry()
+repo = MongoAccountsRepository()
 
 @app.route("/api/accounts", methods=['POST'])
 def create_account():
@@ -102,5 +104,31 @@ def transfer_money(pesel):
     
     except ValueError as e:
         return jsonify({"message" : "demand denied"}), 422
+    
+@app.route("/api/accounts/save", methods=['POST'])
+def save_accounts():
+    try:
+        current_accounts = registry.get_all_accounts()
+        repo.save_all(current_accounts)
+        return jsonify({"message": "Accounts saved successfully"}), 200
+    except Exception as e:
+        return jsonify({"message": f"Save failed: {str(e)}"}), 500
+
+@app.route("/api/accounts/load", methods=['POST'])
+def load_accounts():
+    try:
+        # 1. Wczytaj z bazy
+        loaded_accounts = repo.load_all()
+        
+        # 2. Wyczyść obecny rejestr (wg instrukcji)
+        registry.clear()
+        
+        # 3. Dodaj wczytane konta do rejestru
+        for acc in loaded_accounts:
+            registry.add_account(acc)
+            
+        return jsonify({"message": f"Loaded {len(loaded_accounts)} accounts"}), 200
+    except Exception as e:
+        return jsonify({"message": f"Load failed: {str(e)}"}), 500
     
 

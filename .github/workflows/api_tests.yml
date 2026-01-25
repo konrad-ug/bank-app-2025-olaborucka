@@ -10,6 +10,18 @@ jobs:
   test-api:
     runs-on: ubuntu-latest
 
+    # Dodajemy serwis Mongo dostępny dla kontenera z testami
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
     
@@ -24,12 +36,12 @@ jobs:
         pip install -r requirements.txt
         
     - name: Start flask
+      env:
+        MONGO_HOST: localhost # Flask połączy się z localhost, bo service mongo mapuje port
       run: |
         export FLASK_APP=app/api.py
-        export FLASK_ENV=development
-        export PYTHONPATH=$GITHUB_WORKSPACE
         flask run &
-        sleep 5 # Czekamy chwilę, aż serwer wstanie
+        sleep 5
         
     - name: Execute API tests
       run: |

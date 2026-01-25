@@ -41,6 +41,15 @@ class Account:
             return False
 
         return year > 1960
+    def to_dict(self):
+        return {
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "pesel": self.pesel,
+            "balance": self.balance,
+            "history": self.history,
+            "type": "personal" # Dodajemy znacznik typu konta
+        }
 
     def deposit(self, amount):
         if amount > 0:
@@ -155,3 +164,12 @@ class BusinessAccount(Account): # pragma: no cover
         
         smtp = SMTPClient()
         return smtp.send(subject, message, email)
+    def to_dict(self):
+        return {
+            "company_name": self.company_name,
+            "nip": self.nip,
+            "balance": self.balance,
+            "history": self.history,
+            "type": "business",
+            "pesel": self.pesel # PESEL w firmowym to same zera, ale warto zapisać dla spójności
+        }

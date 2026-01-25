@@ -24,3 +24,5 @@ class AccountsRegistry:
     # TEJ METODY BRAKOWAŁO:
     def get_all_accounts(self):
         return self.accounts
+    def clear(self):
+        self.accounts = []
