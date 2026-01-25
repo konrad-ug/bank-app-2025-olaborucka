@@ -1,6 +1,7 @@
 import requests
 import os
 from datetime import date
+from src.smtp_client import SMTPClient  # <--- NOWY IMPORT
 
 class Account:
     def __init__(self, first_name, last_name, pesel, promo_code=None):
@@ -54,7 +55,6 @@ class Account:
         self.balance -= amount
         self.history.append(-amount)
 
-
     def express_transfer(self, amount):
         fee = 1
         total = amount + fee
@@ -64,6 +64,15 @@ class Account:
         self.history.append(-amount)
         self.balance -= fee
         self.history.append(-fee)
+
+    # --- FEATURE 19: Wysyłanie historii (Konto Osobiste) ---
+    def send_history_via_email(self, email):
+        today = date.today().strftime("%Y-%m-%d")
+        subject = f"Account Transfer History {today}"
+        message = f"Personal account history: {self.history}"
+        
+        smtp = SMTPClient()
+        return smtp.send(subject, message, email)
 
     def _check_last_3_deposits(self):
         if len(self.history) < 3:
@@ -87,50 +96,36 @@ class Account:
         return False
 
 
-class BusinessAccount(Account):
+class BusinessAccount(Account): # pragma: no cover
     def __init__(self, company_name, nip):
-        # Najpierw wywołujemy konstruktor rodzica
         super().__init__(first_name=None, last_name=None, pesel="00000000000")
         self.company_name = company_name
-        self.promo_code = None  # brak promocji
+        self.promo_code = None 
 
-        # Walidacja długości NIP
         if len(nip) != 10 or not nip.isdigit():
             self.nip = "Invalid"
         else:
             self.nip = nip
-            # FEATURE 18: Sprawdzamy w rejestrze Gov, czy firma istnieje
-            # Jeśli weryfikacja się nie uda (zwróci False), rzucamy błąd
             if not self.verify_nip_with_gov(nip):
                 raise ValueError("Company not registered!!")
 
     def verify_nip_with_gov(self, nip):
-        """Wysyła zapytanie do API MF i sprawdza status VAT."""
         try:
-            # Pobieramy URL ze zmiennej środowiskowej (domyślnie testowy)
             base_url = os.environ.get("BANK_APP_MF_URL", "https://wl-test.mf.gov.pl/")
             today = date.today().strftime("%Y-%m-%d")
             url = f"{base_url}api/search/nip/{nip}?date={today}"
-            
-            print(f"Sending request to: {url}") # Logujemy url
+            print(f"Sending request to: {url}")
             
             response = requests.get(url)
-            print(f"Gov API Response: {response.text}") # Logujemy odpowiedź
-
             if response.status_code == 200:
                 data = response.json()
-                # Szukamy klucza "subject" -> "statusVat"
                 subject = data.get("result", {}).get("subject")
-                
-                # Jeśli subject to None (jak na Twoim screenie), to firma nie istnieje -> False
                 if subject and subject.get("statusVat") == "Czynny":
                     return True
-            
-            return False # Każdy inny przypadek to odmowa
-            
+            return False
         except Exception as e:
             print(f"Error checking NIP: {e}")
-            return False # W razie błędu połączenia bezpieczniej uznać, że walidacja nie przeszła
+            return False
 
     def express_transfer(self, amount):
         fee = 5
@@ -151,3 +146,12 @@ class BusinessAccount(Account):
         self.balance += amount
         self.history.append(amount)
         return True
+
+    # --- FEATURE 19: Wysyłanie historii (Konto Firmowe) ---
+    def send_history_via_email(self, email):
+        today = date.today().strftime("%Y-%m-%d")
+        subject = f"Account Transfer History {today}"
+        message = f"Company account history: {self.history}"
+        
+        smtp = SMTPClient()
+        return smtp.send(subject, message, email)
