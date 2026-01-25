@@ -96,9 +96,9 @@ def transfer_money(pesel):
         elif data["type"] == "express" :
             account.express_transfer(amnt)
         else:
-            jsonify({"message": "Invalid transfer type"}), 400
+            return jsonify({"message": "Invalid transfer type"}), 400
 
-        return jsonify({"message ": "demand accepted"}) , 200
+        return jsonify({"message": "demand accepted"}) , 200
     
     except ValueError as e:
         return jsonify({"message" : "demand denied"}), 422
