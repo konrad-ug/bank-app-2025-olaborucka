@@ -1,13 +1,11 @@
 class AccountsRegistry:
     def __init__(self):
-        # Tutaj trzymamy konta (zamiast w bazie danych)
         self.accounts = []
 
     def add_account(self, account):
         self.accounts.append(account)
 
     def get_account_by_pesel(self, pesel):
-        # Przeszukaj listę, żeby znaleźć konto z danym peselem
         for account in self.accounts:
             if account.pesel == pesel:
                 return account
@@ -22,3 +20,7 @@ class AccountsRegistry:
                 self.accounts.remove(account)
                 return True
         return False
+
+    # TEJ METODY BRAKOWAŁO:
+    def get_all_accounts(self):
+        return self.accounts
