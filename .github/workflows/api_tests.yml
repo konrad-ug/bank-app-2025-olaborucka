@@ -9,13 +9,14 @@ on:
 jobs:
   test-api:
     runs-on: ubuntu-latest
+    
     services:
       mongo:
         image: mongo:latest
         ports:
           - 27017:27017
         options: >-
-          --health-cmd mongo
+          --health-cmd "mongosh --eval 'db.runCommand({ping: 1})'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -36,11 +37,21 @@ jobs:
     - name: Start flask
       env:
         MONGO_HOST: localhost
+        PYTHONPATH: .
       run: |
-        export FLASK_APP=app/api.py
-        flask run &
-        sleep 5
+        # Uruchomienie Flaska jako moduł z ustawioną ścieżką
+        python3 -m flask --app app/api.py run &
+        # Czekamy 10 sekund, aż serwer i baza będą gotowe
+        sleep 10
         
     - name: Execute API tests
+      env:
+        PYTHONPATH: .
       run: |
         python3 -m pytest tests/api
+
+    - name: Execute BDD tests
+      env:
+        PYTHONPATH: .
+      run: |
+        behave
