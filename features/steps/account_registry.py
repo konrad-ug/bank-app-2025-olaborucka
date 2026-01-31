@@ -70,3 +70,19 @@ def field_equals_to(context, pesel, field, value):
     assert response.status_code == 200
     data = response.json()
     assert data[field] == value
+
+@step('I make a transfer of "{amount}" type "{transfer_type}" to account with pesel "{pesel}" and expect status "{status}"')
+def make_transfer_expect_status(context, amount, transfer_type, pesel, status):
+    json_body = {
+        "amount": float(amount),
+        "type": transfer_type
+    }
+    response = requests.post(URL + f"/api/accounts/{pesel}/transfer", json=json_body)
+    assert response.status_code == int(status), f"Expected status {status}, but got {response.status_code}"
+
+@step('Account with pesel "{pesel}" has balance equal to "{balance}"')
+def account_balance_equals(context, pesel, balance):
+    response = requests.get(URL + f"/api/accounts/{pesel}")
+    assert response.status_code == 200
+    data = response.json()
+    assert str(data["balance"]) == balance, f"Expected balance {balance}, but got {data['balance']}"
