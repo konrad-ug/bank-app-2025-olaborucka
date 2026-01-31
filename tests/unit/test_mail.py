@@ -56,3 +56,8 @@ class TestMail:
             result = acc.send_history_via_email("wrong@mail.com")
             
             assert result is False
+    
+    def test_smtp_client_real_send_returns_false(self):
+        from src.smtp_client import SMTPClient
+        client = SMTPClient()
+        assert client.send("Subject", "Message", "test@test.pl") is False

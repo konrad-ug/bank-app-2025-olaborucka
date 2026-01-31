@@ -55,3 +55,13 @@ class Testtransfer:
         acc.deposit(100)
         acc.express_transfer(100)
         assert acc.history == [100, -100, -1]
+
+    def test_express_transfer_insufficient_funds_error_personal(self, acc):
+        acc.balance = 0.5
+        with pytest.raises(ValueError, match="Saldo nie może spaść poniżej dozwolonej opłaty."):
+            acc.express_transfer(1)
+
+    def test_express_transfer_insufficient_funds_personal_v2(self, acc):
+        acc.balance = 0 
+        with pytest.raises(ValueError, match="Saldo nie może spaść poniżej dozwolonej opłaty."):
+            acc.express_transfer(1)

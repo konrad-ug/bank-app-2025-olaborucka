@@ -36,3 +36,15 @@ class TestBusinessCredit:
 
         assert result is expected_result
         assert biz_acc.balance == expected_final_balance
+
+    def test_business_loan_denied_no_zus_transfer(self, biz_acc):
+        biz_acc.balance = 10000 
+        biz_acc.history = [1000, 2000] 
+        assert biz_acc.take_loan(1000) is False 
+
+    def test_loan_denied_due_to_no_zus_only(self, biz_acc):
+        biz_acc.balance = 10000  
+        biz_acc.history = [500, 1000] 
+        result = biz_acc.take_loan(1000)
+        assert result is False
+    

@@ -40,3 +40,8 @@ class TestCredit:
         acc.withdraw(10)
         
         assert acc.submit_for_loan(loan_amount) is False
+
+    def test_loan_fail_too_short_history(self, acc):
+        acc.deposit(100)
+        acc.deposit(100) 
+        assert acc.submit_for_loan(500) is False

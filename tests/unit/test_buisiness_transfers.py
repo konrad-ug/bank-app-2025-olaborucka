@@ -41,3 +41,8 @@ class Test_buisness_acc_transfers:
         biz_acc.deposit(100)
         biz_acc.express_transfer(100)
         assert biz_acc.history == [100, -100, -5]
+
+    def test_business_express_transfer_insufficient_funds_error(self, biz_acc):
+        biz_acc.deposit(10)
+        with pytest.raises(ValueError, match="Saldo nie może spaść poniżej dozwolonej opłaty."):
+            biz_acc.express_transfer(11)
