@@ -15,9 +15,7 @@ def create_account(context, name, last_name, pesel):
 
 @step('Account registry is empty')
 def clear_account_registry(context):
-    # Pobieramy listę kont do usunięcia
     response = requests.get(URL + "/api/accounts")
-    # Jeśli serwer nie ma metody get_all_accounts, tu zwróci 500. Asercja nam o tym powie!
     assert response.status_code == 200, f"Failed to fetch accounts for cleanup. Status: {response.status_code}. Did you restart Flask?"
     
     accounts = response.json()
@@ -26,7 +24,6 @@ def clear_account_registry(context):
         del_resp = requests.delete(URL + f"/api/accounts/{pesel}")
         assert del_resp.status_code == 200, f"Failed to delete {pesel}"
     
-    # Weryfikacja, czy na pewno jest pusto
     count_resp = requests.get(URL + "/api/accounts/count")
     assert count_resp.status_code == 200
     count = count_resp.json()["count"]

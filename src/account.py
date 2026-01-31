@@ -1,7 +1,7 @@
 import requests
 import os
 from datetime import date
-from src.smtp_client import SMTPClient  # <--- NOWY IMPORT
+from src.smtp_client import SMTPClient 
 
 class Account:
     def __init__(self, first_name, last_name, pesel, promo_code=None):
@@ -48,7 +48,7 @@ class Account:
             "pesel": self.pesel,
             "balance": self.balance,
             "history": self.history,
-            "type": "personal" # Dodajemy znacznik typu konta
+            "type": "personal"
         }
 
     def deposit(self, amount):
@@ -74,7 +74,6 @@ class Account:
         self.balance -= fee
         self.history.append(-fee)
 
-    # --- FEATURE 19: Wysyłanie historii (Konto Osobiste) ---
     def send_history_via_email(self, email):
         today = date.today().strftime("%Y-%m-%d")
         subject = f"Account Transfer History {today}"
@@ -105,7 +104,7 @@ class Account:
         return False
 
 
-class BusinessAccount(Account): # pragma: no cover
+class BusinessAccount(Account):
     def __init__(self, company_name, nip):
         super().__init__(first_name=None, last_name=None, pesel="00000000000")
         self.company_name = company_name
@@ -156,7 +155,6 @@ class BusinessAccount(Account): # pragma: no cover
         self.history.append(amount)
         return True
 
-    # --- FEATURE 19: Wysyłanie historii (Konto Firmowe) ---
     def send_history_via_email(self, email):
         today = date.today().strftime("%Y-%m-%d")
         subject = f"Account Transfer History {today}"
@@ -171,5 +169,5 @@ class BusinessAccount(Account): # pragma: no cover
             "balance": self.balance,
             "history": self.history,
             "type": "business",
-            "pesel": self.pesel # PESEL w firmowym to same zera, ale warto zapisać dla spójności
+            "pesel": self.pesel 
         }

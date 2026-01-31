@@ -9,14 +9,13 @@ def acc():
 
 class TestAccount:
     
-    # Testy podstawowe 
     def test_initial_attributes(self, acc):
         """Sprawdza, czy nowo utworzone konto ma poprawne dane startowe."""
         assert acc.balance == 0
         assert len(acc.pesel) == 11
         assert acc.first_name == "John" 
 
-    # Walidacja błędnego PESELu
+
     @pytest.mark.parametrize("invalid_pesel", [
         "12345",         
         "1234567890123",  
@@ -28,7 +27,7 @@ class TestAccount:
         acc = Account("John", "Doe", invalid_pesel)
         assert acc.pesel == "invalid"
 
-    # Logika roczników i promocji
+
     @pytest.mark.parametrize("pesel, expected_eligible", [
         ("59010112345", False), # 1959 - za stary
         ("05210112345", True),  # 2005 - OK
@@ -44,7 +43,6 @@ class TestAccount:
         acc = Account("Test", "User", pesel)
         assert acc._is_eligible_for_promo() is expected_eligible
 
-    # Kody promocyjne
     @pytest.mark.parametrize("promo_code, expected_balance", [
         ("PROM_ABC", 50), 
         (None, 0),        

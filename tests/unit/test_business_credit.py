@@ -18,7 +18,6 @@ test_ids = [
 
 @pytest.fixture
 def biz_acc():
-    # Mockujemy weryfikację NIP
     with patch.object(BusinessAccount, 'verify_nip_with_gov', return_value=True):
         return BusinessAccount("Januszex", "1234567890")
 

@@ -7,8 +7,6 @@ def acc():
     return Account("John", "Doe", "12345678901")
 
 class TestCredit:
-
-    # Kredyt przyznany na podstawie 3 ostatnich wpłat
     
     def test_loan_approved_condition_deposits(self, acc):
         acc.deposit(100)
@@ -18,7 +16,6 @@ class TestCredit:
         assert acc.submit_for_loan(300) is True
         assert acc.balance == 100 + 200 + 50 + 300
 
-    # Kredyt przyznany na podstawie sumy transakcji
 
     def test_loan_approved_condition_sum(self, acc):
         acc.deposit(100)
@@ -31,7 +28,6 @@ class TestCredit:
         acc.withdraw(50) 
         assert acc.submit_for_loan(300) is True
 
-    # Kredyt odrzucony
 
     @pytest.mark.parametrize("loan_amount", [
         1000, 

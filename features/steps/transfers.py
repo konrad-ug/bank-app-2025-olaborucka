@@ -12,7 +12,6 @@ def make_transfer(context, amount, transfer_type, pesel):
     response = requests.post(URL + f"/api/accounts/{pesel}/transfer", json=json_body)
     assert response.status_code == 200, f"Transfer failed: {response.text}"
 
-# TO JEST TEN BRAKUJĄCY FRAGMENT:
 @then('Account with pesel "{pesel}" has balance equal to "{balance}"')
 def check_balance(context, pesel, balance):
     response = requests.get(URL + f"/api/accounts/{pesel}")

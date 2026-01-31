@@ -6,8 +6,7 @@ def acc():
     return Account("John", "Doe", "12345678901")
 
 class Testtransfer:
-    
-    # PROSTE WPŁATY I WYPŁATY
+
 
     def test_saldo_deposit(self, acc):
         acc.deposit(100)
@@ -27,7 +26,6 @@ class Testtransfer:
         with pytest.raises(ValueError):
             acc.deposit(-200)
 
-    # PRZELEWY EKSPRESOWE
     
     @pytest.mark.parametrize("initial_money, amount, expected_result", [
         (200, 100, 99),  
@@ -43,7 +41,6 @@ class Testtransfer:
         with pytest.raises(ValueError):
             acc.express_transfer(200)
 
-    # HISTORIA
 
     def test_history_deposit(self, acc):
         acc.deposit(100)

@@ -9,8 +9,6 @@ on:
 jobs:
   test-api:
     runs-on: ubuntu-latest
-
-    # Dodajemy serwis Mongo dostępny dla kontenera z testami
     services:
       mongo:
         image: mongo:latest
@@ -37,7 +35,7 @@ jobs:
         
     - name: Start flask
       env:
-        MONGO_HOST: localhost # Flask połączy się z localhost, bo service mongo mapuje port
+        MONGO_HOST: localhost
       run: |
         export FLASK_APP=app/api.py
         flask run &

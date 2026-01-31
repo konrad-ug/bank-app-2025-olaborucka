@@ -4,7 +4,6 @@ from unittest.mock import patch
 
 @pytest.fixture
 def biz_acc():
-    # Mockujemy weryfikację NIP, żeby testy nie łączyły się z internetem
     with patch.object(BusinessAccount, 'verify_nip_with_gov', return_value=True):
         return BusinessAccount("Januszex", "1234567890")
 

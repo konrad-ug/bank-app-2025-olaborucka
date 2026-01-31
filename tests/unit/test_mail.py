@@ -9,22 +9,16 @@ class TestMail:
         acc.deposit(100)
         acc.withdraw(50)
         
-        # Mockujemy SMTPClient wewnątrz modułu src.account
         with patch('src.account.SMTPClient') as MockSMTP:
-            # Konfigurujemy mocka instancji
             mock_instance = MockSMTP.return_value
-            mock_instance.send.return_value = True  # Symulujemy sukces wysyłki
+            mock_instance.send.return_value = True 
 
-            # Action
             result = acc.send_history_via_email("test@example.com")
 
-            # Assert
             assert result is True
-            
-            # Sprawdzamy czy metoda send została wywołana
+
             mock_instance.send.assert_called_once()
             
-            # Sprawdzamy argumenty wywołania (temat i treść)
             args, _ = mock_instance.send.call_args
             subject, message, email = args
             
@@ -35,12 +29,10 @@ class TestMail:
 
     def test_email_business_account(self):
         """Sprawdza wysłanie maila dla konta firmowego (inny komunikat)."""
-        # Musimy zmockować NIP, żeby stworzyć firmę
         with patch.object(BusinessAccount, 'verify_nip_with_gov', return_value=True):
             acc = BusinessAccount("Firma", "1234567890")
             acc.deposit(1000)
-            
-            # Mockujemy SMTPClient
+
             with patch('src.account.SMTPClient') as MockSMTP:
                 mock_instance = MockSMTP.return_value
                 mock_instance.send.return_value = True
@@ -49,7 +41,6 @@ class TestMail:
 
                 assert result is True
                 
-                # Sprawdzamy treść dla firmy
                 args, _ = mock_instance.send.call_args
                 _, message, _ = args
                 assert message == "Company account history: [1000]"
@@ -60,7 +51,7 @@ class TestMail:
         
         with patch('src.account.SMTPClient') as MockSMTP:
             mock_instance = MockSMTP.return_value
-            mock_instance.send.return_value = False  # Symulujemy błąd serwera
+            mock_instance.send.return_value = False 
 
             result = acc.send_history_via_email("wrong@mail.com")
             

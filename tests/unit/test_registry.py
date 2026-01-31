@@ -24,7 +24,6 @@ class TestAccountsRegistry:
         registry.add_account(known_account)
         assert registry.get_accounts_count() == 1
 
-    # WYSZUKIWANIE
     
     @pytest.mark.parametrize("search_pesel, should_exist", search_test_data)
     def test_get_account_by_pesel(self, registry, known_account, search_pesel, should_exist):

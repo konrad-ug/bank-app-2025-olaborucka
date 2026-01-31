@@ -25,7 +25,6 @@ def create_account():
 @app.route("/api/accounts", methods=['GET'])
 def get_all_accounts():
     accounts = registry.get_all_accounts()
-    # Musimy zamienić obiekty na format JSON (słowniki)
     result = [
         {
             "name": acc.first_name, 
@@ -63,12 +62,10 @@ def update_account(pesel):
 
     data = request.get_json()
     
-    # Aktualizujemy TYLKO to, co przyszło w requescie
     if "name" in data:
         account.first_name = data["name"]
     if "surname" in data:
         account.last_name = data["surname"]
-    # Peselu zazwyczaj się nie zmienia, więc go pomijamy
 
     return jsonify({"message": "Account updated"}), 200
 
@@ -117,13 +114,9 @@ def save_accounts():
 @app.route("/api/accounts/load", methods=['POST'])
 def load_accounts():
     try:
-        # 1. Wczytaj z bazy
         loaded_accounts = repo.load_all()
-        
-        # 2. Wyczyść obecny rejestr (wg instrukcji)
         registry.clear()
         
-        # 3. Dodaj wczytane konta do rejestru
         for acc in loaded_accounts:
             registry.add_account(acc)
             

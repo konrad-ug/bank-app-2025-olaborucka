@@ -76,18 +76,16 @@ class TestAccAPI:
         
     def test_transfer_incoming(self, uni_pesel):
         """1. Test wpłaty (incoming) - saldo powinno wzrosnąć."""
-        # Krok 1: Tworzymy konto (saldo 0)
+
         requests.post(BASE_URL, json={"name": "Jan", "surname": "Kow", "pesel": uni_pesel})
         
-        # Krok 2: Robimy wpłatę
         response = requests.post(f"{BASE_URL}/{uni_pesel}/transfer", json={
             "amount": 1000,
             "type": "incoming"
         })
         assert response.status_code == 200
-        assert response.json()["message"] == "demand accepted" # lub Twoja wiadomość
+        assert response.json()["message"] == "demand accepted"
         
-        # Krok 3: Sprawdzamy saldo
         check = requests.get(f"{BASE_URL}/{uni_pesel}")
         assert check.json()["balance"] == 1000
 
@@ -95,17 +93,14 @@ class TestAccAPI:
         """2. Test wypłaty (outgoing) - saldo powinno zmaleć."""
         requests.post(BASE_URL, json={"name": "Jan", "surname": "Kow", "pesel": uni_pesel})
         
-        # Najpierw wpłacamy 1000
         requests.post(f"{BASE_URL}/{uni_pesel}/transfer", json={"amount": 1000, "type": "incoming"})
         
-        # Teraz wypłacamy 400
         response = requests.post(f"{BASE_URL}/{uni_pesel}/transfer", json={
             "amount": 400,
             "type": "outgoing"
         })
         assert response.status_code == 200
         
-        # Sprawdzamy saldo (1000 - 400 = 600)
         check = requests.get(f"{BASE_URL}/{uni_pesel}")
         assert check.json()["balance"] == 600
 
@@ -113,16 +108,12 @@ class TestAccAPI:
         """3. Test błędu wypłaty (za mało środków) - kod 422."""
         requests.post(BASE_URL, json={"name": "Biedny", "surname": "Jan", "pesel": uni_pesel})
         
-        # Konto ma saldo 0. Próbujemy wypłacić 100.
         response = requests.post(f"{BASE_URL}/{uni_pesel}/transfer", json={
             "amount": 100,
             "type": "outgoing"
         })
         
-        # Oczekujemy błędu "Unprocessable Entity"
         assert response.status_code == 422
-        # Opcjonalnie: sprawdź treść błędu
-        # assert response.json()["message"] == "brak wystarczajacych srodkow na koncie"
 
     def test_transfer_invalid_type(self, uni_pesel):
         """4. Test nieznanego typu przelewu - kod 400."""
@@ -130,7 +121,7 @@ class TestAccAPI:
         
         response = requests.post(f"{BASE_URL}/{uni_pesel}/transfer", json={
             "amount": 100,
-            "type": "kradziez" # Nieznany typ
+            "type": "kradziez" 
         })
         assert response.status_code == 400
 

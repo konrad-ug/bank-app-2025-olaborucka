@@ -21,7 +21,6 @@ class AccountsRegistry:
                 return True
         return False
 
-    # TEJ METODY BRAKOWAŁO:
     def get_all_accounts(self):
         return self.accounts
     def clear(self):
