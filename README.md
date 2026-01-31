@@ -2,13 +2,20 @@
 # Bank-app
 
 ## Author:
-name:
+name: Aleksandra
 
-surname:
+surname: Borucka
 
-group:
+group: 1
 
 ## How to start the app
+python -m venv venv
+source venv/bin/activate
+
+export PYTHONPATH=.:$PYTHONPATH && flask --app app/api.py run
 
 
 ## How to execute tests
+python3 -m coverage run --source=src -m pytest tests/unit && python3 -m coverage report -m
+behave
+python3 -m pytest tests/api
